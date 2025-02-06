@@ -16,15 +16,23 @@ pipeline {
                     echo "Setting up virtual environment..."
                     sh 'python3 -m venv venv'
                     sh './venv/bin/pip install -r requirements.txt'
-                    sh './venv/bin/pip install pytest'  // Install pytest in virtual environment
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    echo "Running tests..."
-                    sh './venv/bin/pytest tests/'  // Run tests using virtual environment's pytest
+                    echo "Testing the API with curl..."
+                    // Make a GET request to the /status/operation endpoint
+                    def response = sh(script: 'curl -s http://localhost:5000/status/operation', returnStdout: true).trim()
+                    echo "API Response: ${response}"
+                    
+                    // Check if the response matches expected output
+                    if (response == '{"health": "All systems operational"}') {
+                        echo "Test Passed"
+                    } else {
+                        error "Test Failed: Unexpected response"
+                    }
                 }
             }
         }
@@ -32,6 +40,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploying application..."
+                    // Build the Docker image and run it
                     sh 'docker build -t python-flask-app .'
                     sh 'docker run -d -p 5000:5000 python-flask-app'
                 }
