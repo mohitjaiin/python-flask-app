@@ -13,8 +13,10 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo "Building the application..."
-                    sh 'pip install -r requirements.txt'
+                    echo "Setting up virtual environment..."
+                    sh 'python3 -m venv venv'
+                    sh './venv/bin/pip install -r requirements.txt'
+                    sh './venv/bin/pip install pytest'  // Install pytest in virtual environment
                 }
             }
         }
@@ -22,8 +24,7 @@ pipeline {
             steps {
                 script {
                     echo "Running tests..."
-                    // Add test command here (e.g., pytest)
-                    sh 'pytest tests/'
+                    sh './venv/bin/pytest tests/'  // Run tests using virtual environment's pytest
                 }
             }
         }
@@ -31,7 +32,6 @@ pipeline {
             steps {
                 script {
                     echo "Deploying application..."
-                    // Docker deployment or cloud deployment command
                     sh 'docker build -t python-flask-app .'
                     sh 'docker run -d -p 5000:5000 python-flask-app'
                 }
@@ -41,7 +41,6 @@ pipeline {
             steps {
                 script {
                     echo "Running the application..."
-                    // Command to ensure the app is running
                     sh 'curl http://localhost:5000/status/operation'
                 }
             }
