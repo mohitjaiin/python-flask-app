@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        GIT_REPO = 'https://github.com/<your-username>/python-flask-app.git'
+        GIT_REPO = 'https://github.com/mohitjaiin/python-flask-app.git'
         BRANCH = 'master'
     }
     stages {
