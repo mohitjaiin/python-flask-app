@@ -31,7 +31,7 @@ pipeline {
                     sh 'nohup ./venv/bin/python app.py &'
                     
                     // Wait for the server to start (add some sleep if necessary)
-                    sleep 10
+                    sleep 30
                     
                     // Perform the curl test
                     def response = sh(script: 'curl -s http://localhost:5000/status/operation', returnStdout: true).trim()
